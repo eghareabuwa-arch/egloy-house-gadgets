@@ -1,27 +1,15 @@
-# EGLOY HOUSE GADGETS NIG LTD
+## AWS S3 CI/CD Workflow
 
-This is a static e-commerce website for EGLOY HOUSE GADGETS NIG LTD, a household gadgets business.
+This project uses GitHub Actions to deploy the static e-commerce website to AWS S3.
 
-## Project Description
+The workflow first deploys the website files to a staging S3 bucket. After staging is successful, the workflow proceeds to production using GitHub Environments.
 
-The website displays household gadgets such as kitchen items, mini vacuums, LED lights, kettles, laundry baskets, and extension sockets.
+Since Amazon S3 does not provide deployment slots like Azure App Service, staging and production were implemented using two separate S3 buckets.
 
-## Files
+### Staging URL
 
-- `index.html` — main website structure
-- `styles.css` — styling, layout, colours, responsiveness, and animations
-- `script.js` — simple interaction for product buttons
-- `README.md` — project documentation
+http://egloy-house-gadgets-staging-2026.s3-website.eu-north-1.amazonaws.com
 
-## Deployment Platform
+### Production URL
 
-The website is deployed as a static website using Amazon S3.
-
-## S3 Static Website Configuration
-
-- Index document: `index.html`
-- Error document: `index.html`
-
-## Website Type
-
-Static web app / static e-commerce landing page.
+http://egloy-house-gadgets-site-2026.s3-website.eu-north-1.amazonaws.com
