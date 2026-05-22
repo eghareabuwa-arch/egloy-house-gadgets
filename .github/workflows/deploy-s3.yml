@@ -1,26 +1,53 @@
-deploy-staging:
-  name: Deploy to Staging S3
-  runs-on: ubuntu-latest
-  environment: staging
+name: Deploy Static Website to AWS S3
 
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+on:
+  push:
+    branches:
+      - main
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+jobs:
+  deploy-staging:
+    name: Deploy to Staging S3
+    runs-on: ubuntu-latest
+    environment: staging
 
-    - name: Confirm AWS account and list buckets
-      run: |
-        aws sts get-caller-identity
-        aws s3 ls
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Deploy files to staging bucket
-      run: |
-        aws s3 sync . s3://egloy-house-gadgets-staging-2026 --delete \
-          --exclude ".git/*" \
-          --exclude ".github/*"
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Confirm AWS account and list buckets
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls
+
+      - name: Deploy files to staging bucket
+        run: |
+          aws s3 sync . s3://egloy-house-gadgets-staging-2026 --delete --exclude ".git/*" --exclude ".github/*"
+
+  deploy-production:
+    name: Deploy to Production S3
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy files to production bucket
+        run: |
+          aws s3 sync . s3://egloy-house-gadgets-site-2026 --delete --exclude ".git/*" --exclude ".github/*"
